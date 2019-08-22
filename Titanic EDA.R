@@ -11,13 +11,13 @@ train_data <- read.csv('train.csv')
 
 ###Cleaner Data
 train_clean_data <- train_data %>%
-  select(-Name)
-mutate(Survived = if_else(Survived == 1,
-                          'Yes',
-                          'No'),
-       Pclass = case_when(Pclass == 1 ~ 'First',
-                          Pclass == 2 ~ 'Second',
-                          Pclass == 3 ~ 'Third'))
+  select(-Name) %>%
+  mutate(Survived = if_else(Survived == 1,
+                            'Yes',
+                            'No'),
+         Pclass = case_when(Pclass == 1 ~ 'First',
+                            Pclass == 2 ~ 'Second',
+                            Pclass == 3 ~ 'Third'))
 
 number_survived_simple_bar <- train_clean_data %>%
   group_by(Survived) %>%
@@ -81,19 +81,31 @@ spread_column <- function(data, column) {
 }
 
 ###Cluster Analysis function
-cluster_analysis_graphic_function <- function(data, cluster_group) {
+cluster_analysis_graphic_function <- function(data, cluster_group, remove_NAs) {
+  group_name <- cluster_group %>%
+    gsub('_.*$', '', .)
+  
+  ageTF <- grepl('Age', cluster_group)
+  
   temp <- data %>%
-    group_by_(cluster_group, 'Survived') %>%
-    summarise(count = n(),
-              if(grepl('Age', cluster_group)) 
-                {max_age = max(Age)}) %>%
     rename_('group' = cluster_group) %>%
+    {if(remove_NAs) filter(., .$group != 'NA') else filter(., .$group != 'asdf')} %>%
+    group_by(group, Survived) %>%
+    summarise(count = n(),
+              max_age = if_else(ageTF,
+                                max(Age),
+                                0)) %>%
     mutate(total = ave(count, group, FUN = sum),
-           percent = count/total*100) %>%
-    filter(Survived == 'Yes') %>%
-    ggplot(aes(x = group, 
-               y = percent)) +
+           percent = ((count/total*100) %>%
+                        round() %>%
+                        paste('%', sep =''))) %>%
+    ggplot(aes(x = reorder(group, -max_age), 
+               y = count,
+               fill = Survived)) +
     geom_bar(stat='identity') +
+    geom_text(aes(label = percent), position = position_stack(vjust = .5)) +
+    labs(x = group_name) +
+    scale_fill_manual(values = c('#fa4141', '#37b025')) +
     coord_flip()
 }
 
@@ -114,6 +126,10 @@ Ticket_count_table <- train_clean_data %>%
   summarise(count = n()) %>%
   ungroup() %>%
   arrange(-count)
+
+###Embarked difference
+number_survived_embarked_bar <- train_clean_data %>%
+  categorical_bar_chart_function('Embarked')
 
 
 ##Quantitative Variables
@@ -163,37 +179,14 @@ age_clustering_table <- train_clean_data %>%
                                 is.na(Age) ~ 'NA',
                                 TRUE ~ '15-80'))
 
+age_clustering_1 <- age_clustering_table %>%
+  cluster_analysis_graphic_function('Age_group1', remove_NAs = T)
+
+age_clustering_2 <- age_clustering_table %>%
+  cluster_analysis_graphic_function('Age_group2', F)
+  
 
 
-age_clustering_analysis <- train_clean_data %>%
-  mutate(age_group1 = case_when(Age < 5 ~ '0-5',
-                               Age < 10 ~ '5-10',
-                               Age < 15 ~ '10-15',
-                               Age < 20 ~ '15-20',
-                               Age < 25 ~ '20-25',
-                               Age < 30 ~ '25-30',
-                               Age < 35 ~ '30-35',
-                               Age < 40 ~ '35-40',
-                               Age < 45 ~ '40-45',
-                               Age < 50 ~ '45-50',
-                               Age < 55 ~ '50-55',
-                               Age < 60 ~ '55-60',
-                               Age < 65 ~ '60-65',
-                               Age < 70 ~ '65-70',
-                               Age < 75 ~ '70-75',
-                               Age <= 80 ~ '75-80',
-                               TRUE ~ 'NA'),
-         age_group2 = case_when(Age < 15 ~ '0-15',
-                                is.na(Age) ~ 'NA',
-                                TRUE ~ '15-80')) %>%
-  group_by(age_group1, Survived) %>%
-  summarise(count = n()) %>%
-  mutate(total = ave(count, age_group1, FUN = sum),
-         percent = count/total*100) %>%
-  filter(Survived == 'Yes') %>%
-  ggplot(aes(x = age_group1, y = percent)) +
-  geom_bar(stat='identity') +
-  coord_flip()
 
 
 
