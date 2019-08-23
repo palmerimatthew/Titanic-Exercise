@@ -17,7 +17,8 @@ train_clean_data <- train_data %>%
                             'No'),
          Pclass = case_when(Pclass == 1 ~ 'First',
                             Pclass == 2 ~ 'Second',
-                            Pclass == 3 ~ 'Third'))
+                            Pclass == 3 ~ 'Third'),
+         Cabin_Start = substr(Cabin, 1, 1))
 
 number_survived_simple_bar <- train_clean_data %>%
   group_by(Survived) %>%
@@ -89,7 +90,7 @@ cluster_analysis_graphic_function <- function(data, cluster_group, remove_NAs) {
   
   temp <- data %>%
     rename_('group' = cluster_group) %>%
-    {if(remove_NAs) filter(., .$group != 'NA') else filter(., .$group != 'asdf')} %>%
+    {if(remove_NAs) filter(., .$group != 'NA') else .} %>%
     group_by(group, Survived) %>%
     summarise(count = n(),
               max_age = if_else(ageTF,
@@ -127,9 +128,22 @@ Ticket_count_table <- train_clean_data %>%
   ungroup() %>%
   arrange(-count)
 
+specific_ticket <- train_clean_data %>%
+  filter(Ticket == ((Ticket_count_table) %$%
+                      Ticket %>%
+                      as.character() %>%
+                      .[2]))
+
+
+###Cabin difference
+number_survived_cabin_bar <- train_clean_data %>%
+  categorical_bar_chart_function('Cabin_Start')
+
 ###Embarked difference
 number_survived_embarked_bar <- train_clean_data %>%
   categorical_bar_chart_function('Embarked')
+
+###
 
 
 ##Quantitative Variables
