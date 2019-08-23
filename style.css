@@ -1,3 +1,5 @@
+/*Credit to github user 'holtzy' for this template */
+
 /* This change the style of the main container that wraps the whole R Markdown document. It allows the parallax image to be full width */
 .main-container {
     max-width: 100% !important;
