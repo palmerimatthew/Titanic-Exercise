@@ -32,7 +32,7 @@ number_survived_simple_bar <- train_clean_data %>%
 ##Helper Functions
 
 ###Bar Chart for Categorical Variables
-categorical_bar_chart_function <- function(data, variable) {
+categorical_bar_chart_function <- function(data, variable, remove_NAs = T) {
   data %>%
     group_by_('Survived', variable) %>%
     summarise(count=n()) %>%
@@ -41,13 +41,18 @@ categorical_bar_chart_function <- function(data, variable) {
     mutate(total = ave(count, Variable, FUN = sum),
            percent = ((count/total*100) %>%
                         round() %>%
-                        paste('%', sep = ''))) %>%
+                        paste('%', sep = '')),
+           Variable = if_else(is.na(Variable),
+                              'NA',
+                              as.character(Variable))) %>%
+    {if(remove_NAs) filter(., .$Variable != 'NA') else .} %>%
     ggplot(aes(x = Variable, y = count, fill = Survived)) +
     geom_bar(stat = 'identity') +
     geom_text(aes(label = percent), position = position_stack(vjust = .5)) +
     scale_fill_manual(values = c('#fa4141', '#37b025')) +
     labs(x = variable) +
-    theme(axis.title.x = element_blank()) +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank()) +
     guides(fill = guide_legend(reverse = T)) +
     coord_flip()
 }
