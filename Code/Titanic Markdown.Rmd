@@ -7,12 +7,13 @@ output:
     css: html/style.css
     includes:
       before_body: ../html/header.html
-    
 ---
+
 
 <br><br>
 
 <div class = "mycontent">
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = F, eval = T, warning = F, message = F)
@@ -46,7 +47,7 @@ train_clean_data <- train_data %>%
 
 ```{r, Helper Functions}
 # Bar Chart for Categorical Variables ----
-categorical_bar_chart_function <- function(data, variable) {
+categorical_bar_chart_function <- function(data, variable, remove_NAs = T) {
   data %>%
     group_by_('Survived', variable) %>%
     summarise(count=n()) %>%
@@ -55,13 +56,18 @@ categorical_bar_chart_function <- function(data, variable) {
     mutate(total = ave(count, Variable, FUN = sum),
            percent = ((count/total*100) %>%
                         round() %>%
-                        paste('%', sep = ''))) %>%
+                        paste('%', sep = '')),
+           Variable = if_else(is.na(Variable),
+                              'NA',
+                              as.character(Variable))) %>%
+    {if(remove_NAs) filter(., .$Variable != 'NA') else .} %>%
     ggplot(aes(x = Variable, y = count, fill = Survived)) +
     geom_bar(stat = 'identity') +
     geom_text(aes(label = percent), position = position_stack(vjust = .5)) +
     scale_fill_manual(values = c('#fa4141', '#37b025')) +
     labs(x = variable) +
-    theme(axis.title.x = element_blank()) +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank()) +
     guides(fill = guide_legend(reverse = T)) +
     coord_flip()
 }
@@ -223,21 +229,28 @@ In this section, work will be done to understand the relationship between each v
 number_survived_class_bar
 ```
 
+We can see a pretty distinct breakdown based on the passenger's class. Lifeboats were clearly more accessible for first class passengers, and least accessible for third class passengers. We can also see that a large portion of the passengers were third class passengers.
+
 ## Gender
 ```{r, Gender EDA, fig.height=4, fig.width=14}
 number_survived_gender_bar
 ```
+
+There is a distinct difference based on the gender of the passengers. It is common knowledge that during the sinking of the Titanic, women and children were given priority to the lifeboats over men, and we can see that reflected here.
 
 ## Cabin
 ```{r, Cabin EDA, fig.height=4, fig.width=14}
 number_survived_cabin_bar
 ```
 
+Cabin starts with 'A' at the top of the ship down to 'G' at the bottom of the ship. There is some cabins with higher survivorship, but it doesn't make logical sense with the relative locations of the cabins to the lifeboat locations (A only at 47% but B is at 74%). Some digging might be needed to see if these differences are due to other factors other than the cabin location (maybe a lot of first class rooms were in cabin B for example).
+
 ## Embark Location
 ```{r, Embarked EDA, fig.height=4, fig.width=14}
 number_survived_embarked_bar
 ```
 
+This shows breakdowns based on the departure location (S - Southampton, C - Cherbourg, Q - Queenstown). Don't expect this to be used at all in any future model. We don't see any sizable distinction in the locations, and logically I wouldn't expect any importance of where they came from (that isn't already included in things like Class).
 
 </div>
 
