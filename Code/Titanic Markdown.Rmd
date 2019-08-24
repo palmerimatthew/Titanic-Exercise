@@ -4,9 +4,9 @@ author: "<center><div class='mysubtitle'>Created by Matthew Palmeri</div></cente
 date: "<center><div class='mysubtitle'>as of August 23, 2019</div></center>"
 output: 
   html_document:
-    css: HTML_customization/style.css
+    css: html/style.css
     includes:
-      before_body: HTML_customization/header.html
+      before_body: ../html/header.html
     
 ---
 
@@ -15,10 +15,17 @@ output:
 <div class = "mycontent">
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, eval = F)
+knitr::opts_chunk$set(echo = F, eval = T, warning = F, message = F)
 require(utils)
 require(tidyverse)
 require(magrittr)
+
+devtools::source_gist("c83e078bf8c81b035e32c3fc0cf04ee8", 
+                      filename = 'render_toc.R')
+```
+
+```{r, toc}
+render_toc("Titanic Markdown.Rmd")
 ```
 
 
@@ -206,8 +213,30 @@ age_clustering_2 <- age_clustering_table %>%
 ```
 
 
-## Background and Introduction
+# Background and Introduction
 
+# Data Understanding
+In this section, work will be done to understand the relationship between each variable and the survival rate, to help inform model construction. 
+
+## Class
+```{r, Class EDA, fig.height=4, fig.width=14}
+number_survived_class_bar
+```
+
+## Gender
+```{r, Gender EDA, fig.height=4, fig.width=14}
+number_survived_gender_bar
+```
+
+## Cabin
+```{r, Cabin EDA, fig.height=4, fig.width=14}
+number_survived_cabin_bar
+```
+
+## Embark Location
+```{r, Embarked EDA, fig.height=4, fig.width=14}
+number_survived_embarked_bar
+```
 
 
 </div>
