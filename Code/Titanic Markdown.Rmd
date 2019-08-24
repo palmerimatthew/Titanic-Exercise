@@ -4,9 +4,9 @@ author: "<center><div class='mysubtitle'>Created by Matthew Palmeri</div></cente
 date: "<center><div class='mysubtitle'>as of August 23, 2019</div></center>"
 output: 
   html_document:
-    css: style.css
+    css: HTML_customization/style.css
     includes:
-      before_body: header.html
+      before_body: HTML_customization/header.html
     
 ---
 
@@ -23,7 +23,7 @@ require(magrittr)
 
 
 ```{r, Data Read-in}
-train_data <- read.csv('train.csv')
+train_data <- read_csv("Data/train.csv")
 
 train_clean_data <- train_data %>%
   select(-Name) %>%
