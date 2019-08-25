@@ -259,7 +259,19 @@ number_survived_embarked_bar
 This shows breakdowns based on the departure location (S - Southampton, C - Cherbourg, Q - Queenstown). Don't expect this to be used at all in any future model. We don't see any sizable distinction in the locations, and logically I wouldn't expect any importance of where they came from (that isn't already included in things like Class).
 
 
+## Quantitative Variables
 
+### Fare
+```{r, Fare EDA, fig.height=4, fig.width=14}
+fare_difference_boxplot
+```
+
+### Age
+```{r, Age EDA, fig.height=4, fig.width=14}
+age_difference_boxplot
+age_by_year_histogram
+age_clustering_2
+```
 
 </div>
 
