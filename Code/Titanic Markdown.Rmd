@@ -25,10 +25,14 @@ devtools::source_gist("c83e078bf8c81b035e32c3fc0cf04ee8",
                       filename = 'render_toc.R')
 ```
 
+<details>
+  <summary>Table of Contents</summary>
+
+
 ```{r, toc}
 render_toc("Titanic Markdown.Rmd")
 ```
-
+</details>
 
 ```{r, Data Read-in}
 train_data <- read_csv("Data/train.csv")
@@ -224,33 +228,38 @@ age_clustering_2 <- age_clustering_table %>%
 # Data Understanding
 In this section, work will be done to understand the relationship between each variable and the survival rate, to help inform model construction. 
 
-## Class
+## Categorical variables
+
+### Class
 ```{r, Class EDA, fig.height=4, fig.width=14}
 number_survived_class_bar
 ```
 
 We can see a pretty distinct breakdown based on the passenger's class. Lifeboats were clearly more accessible for first class passengers, and least accessible for third class passengers. We can also see that a large portion of the passengers were third class passengers.
 
-## Gender
+### Gender
 ```{r, Gender EDA, fig.height=4, fig.width=14}
 number_survived_gender_bar
 ```
 
 There is a distinct difference based on the gender of the passengers. It is common knowledge that during the sinking of the Titanic, women and children were given priority to the lifeboats over men, and we can see that reflected here.
 
-## Cabin
+### Cabin
 ```{r, Cabin EDA, fig.height=4, fig.width=14}
 number_survived_cabin_bar
 ```
 
-Cabin starts with 'A' at the top of the ship down to 'G' at the bottom of the ship. There is some cabins with higher survivorship, but it doesn't make logical sense with the relative locations of the cabins to the lifeboat locations (A only at 47% but B is at 74%). Some digging might be needed to see if these differences are due to other factors other than the cabin location (maybe a lot of first class rooms were in cabin B for example).
+Cabin starts with 'A' at the top of the ship down to 'G' at the bottom of the ship. It should be noted that a large percentage of the data has a null value in this column. There is some cabins with higher survivorship, but it doesn't make logical sense with the relative locations of the cabins to the lifeboat locations (A only at 47% but B is at 74%). Some digging might be needed to see if these differences are due to other factors other than the cabin location (maybe a lot of first class rooms were in cabin B for example).
 
-## Embark Location
+### Embark Location
 ```{r, Embarked EDA, fig.height=4, fig.width=14}
 number_survived_embarked_bar
 ```
 
 This shows breakdowns based on the departure location (S - Southampton, C - Cherbourg, Q - Queenstown). Don't expect this to be used at all in any future model. We don't see any sizable distinction in the locations, and logically I wouldn't expect any importance of where they came from (that isn't already included in things like Class).
+
+
+
 
 </div>
 
