@@ -1,6 +1,7 @@
 require(utils)
 require(tidyverse)
 require(magrittr)
+require(Rfast)
 
 
 train_data <- read.csv('train.csv')
@@ -137,7 +138,10 @@ specific_ticket <- train_clean_data %>%
   filter(Ticket == ((Ticket_count_table) %$%
                       Ticket %>%
                       as.character() %>%
-                      .[2]))
+                      .[4]))
+
+specific_ticket <- train_clean_data %>%
+  filter(Ticket == '110465')
 
 
 ###Cabin difference
@@ -148,7 +152,18 @@ number_survived_cabin_bar <- train_clean_data %>%
 number_survived_embarked_bar <- train_clean_data %>%
   categorical_bar_chart_function('Embarked')
 
-###
+###Number of Children/Parents
+Ticketed_information <- train_clean_data %>%
+  group_by(Ticket) %>%
+  summarise(`1st` = round(nth(Age, 1)),
+            `2nd` = round(nth(Age, 2)),
+            `3rd` = round(nth(Age, 3)),
+            `4th` = round(nth(Age, 4)),
+            `5th` = round(nth(Age, 5)),
+            `6th` = round(nth(Age, 6)),
+            `7th` = round(nth(Age, 7)))
+
+
 
 
 ##Quantitative Variables
