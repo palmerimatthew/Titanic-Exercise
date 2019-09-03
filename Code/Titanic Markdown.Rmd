@@ -45,7 +45,10 @@ train_clean_data <- train_data %>%
          Pclass = case_when(Pclass == 1 ~ 'First',
                             Pclass == 2 ~ 'Second',
                             Pclass == 3 ~ 'Third'),
-         Cabin_Start = substr(Cabin, 1, 1))
+         Cabin_Start = substr(Cabin, 1, 1),
+         Has_Children = if_else(Age >= 21,
+                                Parch > 0,
+                                F))
 ```
 
 
@@ -166,6 +169,11 @@ number_survived_cabin_bar <- train_clean_data %>%
 # Embarked difference ----
 number_survived_embarked_bar <- train_clean_data %>%
   categorical_bar_chart_function('Embarked')
+
+# Children on board difference ----
+number_survived_has_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  categorical_bar_chart_function('Has_Children')
 ```
 
 
@@ -223,6 +231,26 @@ age_clustering_2 <- age_clustering_table %>%
 ```
 
 
+```{r, Interaction terms understanding}
+# Gender/Class combo difference ----
+number_survived_gender_class_bar <- train_clean_data %>%
+  mutate(Sex_Pclass = paste(Sex, Pclass)) %>%
+  categorical_bar_chart_function('Sex_Pclass')
+
+# Gender/Children ----
+number_survived_gender_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  mutate(Sex_Children = paste(Sex, Has_Children)) %>%
+  categorical_bar_chart_function('Sex_Children')
+
+# Class/Children ----
+number_survived_class_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  mutate(Class_Children = paste(Pclass, Has_Children)) %>%
+  categorical_bar_chart_function('Class_Children')
+```
+
+
 # Background and Introduction
 
 # Data Understanding
@@ -258,6 +286,12 @@ number_survived_embarked_bar
 
 This shows breakdowns based on the departure location (S - Southampton, C - Cherbourg, Q - Queenstown). Don't expect this to be used at all in any future model. We don't see any sizable distinction in the locations, and logically I wouldn't expect any importance of where they came from (that isn't already included in things like Class).
 
+###Child on Board
+```{r, Child on board EDA, fig.height=4, fig.width=14}
+number_survived_has_children_bar
+```
+
+
 
 ## Quantitative Variables
 
@@ -273,6 +307,23 @@ age_by_year_histogram
 age_clustering_2
 ```
 
+
+## Interaction Terms
+
+### Gender and Class Interaction
+```{r, Gender and Class interaction, fig.height=4, fig.width=14}
+number_survived_gender_class_bar
+```
+
+### Gender and Children
+```{r, Gender and Children interaction, fig.height=4, fig.width=14}
+number_survived_gender_children_bar
+```
+
+### Class and Children
+```{r, Class and Children interaction, fig.height=4, fig.width=14}
+number_survived_class_children_bar
+```
 </div>
 
 
