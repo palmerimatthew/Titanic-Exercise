@@ -301,13 +301,26 @@ Its common knowledge that during the evacuation of the Titanic, parents and chil
 fare_difference_boxplot
 ```
 
+We see that in the population of survivors, that there fare might have been slightly higher, however for families that were all on the same ticket, they all share the total fare (each one would have the total fare on their row in the data frame) Fare and class are likely intertwinned. 
+
 ### Age
-```{r, Age EDA, fig.height=4, fig.width=14}
+```{r, Age EDA 1, fig.height=4, fig.width=14}
 age_difference_boxplot
+```
+
+We don't see much seperation in this box plots, however we likely will see more seperation if we segment age into different groups.
+
+```{r, Age EDA 2, fig.height=4, fig.width=14}
 age_by_year_histogram
+```
+
+The above shows the percentage of passengers that survived for each age. We can see around age 15 that there seems to be a break there, where children less than 15 had higher survivorship compared to those over age 15. We will look at this grouping in the below graphic.
+
+```{r, Age EDA 3, fig.height=4, fig.width=14}
 age_clustering_2
 ```
 
+We can see here a pretty sizable difference in survivorship, with 58% of passengers less than 15 surviving, but only 39% of passengers older than 15 survived. 
 
 ## Interaction Terms
 
