@@ -291,6 +291,7 @@ This shows breakdowns based on the departure location (S - Southampton, C - Cher
 number_survived_has_children_bar
 ```
 
+Its common knowledge that during the evacuation of the Titanic, parents and children were given priority to the lifeboats. We can see here that 52% of the people 21 or older that had a child on board survived, compared to only 36% of the people who didn't have a child on board.
 
 
 ## Quantitative Variables
@@ -324,6 +325,7 @@ number_survived_gender_children_bar
 ```{r, Class and Children interaction, fig.height=4, fig.width=14}
 number_survived_class_children_bar
 ```
+
 </div>
 
 
