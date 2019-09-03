@@ -345,6 +345,15 @@ number_survived_class_children_bar
 
 In this graphic, we can see clear seperation with third and second class passengers, where those that had a child on board had a higher survivorship compared to those that didn't have a child on board. 
 
+## Recap
+
+Our end goal in this is to accurate predict whether an individual will survive the Titanic sinking. We saw:
+
+ * Indications that variables like the passenger's class and gender (as well as their interaction term) will likely play a key role in whatever model we eventually build. 
+ * The presence of a child on board increasing an older passenger's chance of surviving, as well as the fact that gender doesn't seem to align with this (in fact this was an example of Simpson's Paradox). 
+ * That information like embarking location and cabin didn't seem important on their own, although these may have weight in a multivariate model. 
+ * Continuous variables like age and fare by themselves didn't have much of a difference, but that grouping them (especially age) can lead to extra insights.
+
 </div>
 
 
