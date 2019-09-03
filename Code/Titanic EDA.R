@@ -19,7 +19,10 @@ train_clean_data <- train_data %>%
          Pclass = case_when(Pclass == 1 ~ 'First',
                             Pclass == 2 ~ 'Second',
                             Pclass == 3 ~ 'Third'),
-         Cabin_Start = substr(Cabin, 1, 1))
+         Cabin_Start = substr(Cabin, 1, 1),
+         Has_Children = if_else(Age >= 21,
+                                Parch > 0,
+                                F))
 
 number_survived_simple_bar <- train_clean_data %>%
   group_by(Survived) %>%
@@ -51,9 +54,8 @@ categorical_bar_chart_function <- function(data, variable, remove_NAs = T) {
     geom_bar(stat = 'identity') +
     geom_text(aes(label = percent), position = position_stack(vjust = .5)) +
     scale_fill_manual(values = c('#fa4141', '#37b025')) +
-    labs(x = variable) +
-    theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank()) +
+    labs(x = gsub('_', ' ', variable)) +
+    theme(axis.title.x = element_blank()) +
     guides(fill = guide_legend(reverse = T)) +
     coord_flip()
 }
@@ -138,10 +140,10 @@ specific_ticket <- train_clean_data %>%
   filter(Ticket == ((Ticket_count_table) %$%
                       Ticket %>%
                       as.character() %>%
-                      .[4]))
+                      .[2]))
 
 specific_ticket <- train_clean_data %>%
-  filter(Ticket == '110465')
+  filter(Ticket == '11765')
 
 
 ###Cabin difference
@@ -162,6 +164,10 @@ Ticketed_information <- train_clean_data %>%
             `5th` = round(nth(Age, 5)),
             `6th` = round(nth(Age, 6)),
             `7th` = round(nth(Age, 7)))
+
+has_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  categorical_bar_chart_function('Has_Children')
 
 
 
@@ -230,20 +236,19 @@ age_clustering_2 <- age_clustering_table %>%
 ###Gender/Class combo difference
 number_survived_gender_class_bar <- train_clean_data %>%
   mutate(Sex_Pclass = paste(Sex, Pclass)) %>%
-  group_by(Survived, Sex_Pclass) %>%
-  summarise(count=n()) %>%
-  ungroup() %>%
-  mutate(total = ave(count, Sex_Pclass, FUN = sum),
-         percent = ((count/total*100) %>%
-                      round() %>%
-                      paste('%', sep = ''))) %>%
-  ggplot(aes(x = Sex_Pclass, y = count, fill = Survived)) +
-  geom_bar(stat = 'identity') +
-  geom_text(aes(label = percent), position = position_stack(vjust = .5)) +
-  scale_fill_manual(values = c('#fa4141', '#37b025')) +
-  guides(fill = guide_legend(reverse = T)) +
-  coord_flip()
+  categorical_bar_chart_function('Sex_Pclass')
 
+###Gender/Children
+number_survived_gender_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  mutate(Sex_Children = paste(Sex, Has_Children)) %>%
+  categorical_bar_chart_function('Sex_Children')
+
+###Class/Children
+number_survived_class_children_bar <- train_clean_data %>%
+  filter(Age >= 21) %>%
+  mutate(Class_Children = paste(Pclass, Has_Children)) %>%
+  categorical_bar_chart_function('Class_Children')
 
 
 
