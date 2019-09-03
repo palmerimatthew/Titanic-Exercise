@@ -316,15 +316,21 @@ age_clustering_2
 number_survived_gender_class_bar
 ```
 
+We can see clear seperation of the genders in the same class in this graphic. 
+
 ### Gender and Children
 ```{r, Gender and Children interaction, fig.height=4, fig.width=14}
 number_survived_gender_children_bar
 ```
 
+Amazingly, we see that when we seperate the population by gender that the group that didn't have children on board survived at a higher rate than those that had children on board. This goes against the common notion that the mother would be the one that typically went with their child, as we don't see an increase in the percentage of women with a child on board compared to women with a child on board. 
+
 ### Class and Children
 ```{r, Class and Children interaction, fig.height=4, fig.width=14}
 number_survived_class_children_bar
 ```
+
+In this graphic, we can see clear seperation with third and second class passengers, where those that had a child on board had a higher survivorship compared to those that didn't have a child on board. 
 
 </div>
 
