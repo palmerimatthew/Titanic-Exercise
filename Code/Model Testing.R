@@ -1,6 +1,8 @@
 require(here)
 require(magrittr)
 require(tidyverse)
+require(InformationValue)
+require(car)
 
 
 # Datasets and functions----
@@ -13,6 +15,9 @@ full_data <- read.csv(here('Data', 'train.csv')) %>%
          Has_Children = if_else(Age >= 21,
                                 Parch > 0,
                                 F),
+         Has_Children = if_else(is.na(Has_Children),
+                                F,
+                                Has_Children),
          Age_Group = case_when(Age < 15 ~ '0-15',
                                is.na(Age) ~ 'NA',
                                TRUE ~ '15-80'),
@@ -428,7 +433,7 @@ for(column in columns) {
     if(typeof(smb) != 'character') {
       IV_df[IV_df$field == column, 2] <- smb$iv
     }
-  } else if (data_type == 'character') {
+  } else if (data_type == 'character' | data_type == 'logical') {
     temp <- train_logit %>%
       rename('desire' = column) %>%
       mutate(desire = as.factor(desire))
@@ -439,11 +444,30 @@ for(column in columns) {
   }
 }
 
-smb <- smbinning.factor(train_logit, y = 'Survived', x = 'Sex')
+
+#Model construction
+
+train_logit <- train_logit %>%
+  mutate()
+
+logit <- glm(Survived ~ Pclass + Sex + Sex_Pclass + Has_Children + Sex_Children + Fare,
+             data = train_logit, family=binomial(link="logit"))
 
 
+predicted <- predict(logit, test_logit, type = 'response')
 
 
+# Model validation and cut-off decisions
+
+opt_cutoff <- optimalCutoff(test_logit$Survived, predicted)
+
+plotROC(test_logit$Survived, predicted)
+true_positive <- sensitivity(test_logit$Survived, predicted, threshold = opt_cutoff)
+true_negative <- specificity(test_logit$Survived, predicted, threshold = opt_cutoff)
+precision <- precision(test_logit$Survived, predicted, threshold = opt_cutoff)
+mis_class_rate <- misClassError(test_logit$Survived, predicted, threshold = opt_cutoff) 
+ks_stat <- ks_stat(test_logit$Survived, predicted)
+ks_plot(test_logit$Survived, predicted)
 
 
 
