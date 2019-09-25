@@ -22,6 +22,8 @@ full_data <- read.csv(here('Data', 'train.csv')) %>%
                                is.na(Age) ~ 'NA',
                                TRUE ~ '15-80'),
          Sex = as.character(Sex),
+         SibSp = as.character(SibSp),
+         Parch = as.character(Parch),
          Ticket = as.character(Ticket),
          Cabin = as.character(Cabin),
          Embarked = as.character(Embarked),
@@ -413,7 +415,8 @@ index_no <- sample(1:nrow(train_no), 0.7*nrow(train_yes))
 train_logit <- rbind(train_yes[index_yes,], train_no[index_no,])
 
 #testing set
-test_logit <- rbind(train_yes[-index_yes,], train_no[-index_no,])
+test_logit <- rbind(train_yes[-index_yes,], train_no[-index_no,]) %>%
+  filter(Cabin_Start != 'T')
 
 
 
@@ -450,7 +453,7 @@ for(column in columns) {
 train_logit <- train_logit %>%
   mutate()
 
-logit <- glm(Survived ~ Pclass + Sex + Sex_Pclass + Has_Children + Sex_Children + Fare,
+logit <- glm(Survived ~ Pclass + Sex + Sex_Pclass + Sex_Children + Fare,
              data = train_logit, family=binomial(link="logit"))
 
 
@@ -459,7 +462,9 @@ predicted <- predict(logit, test_logit, type = 'response')
 
 # Model validation and cut-off decisions
 
-opt_cutoff <- optimalCutoff(test_logit$Survived, predicted)
+model_results <- data.frame(Survived = test_logit$Survived, predicted)
+
+opt_cutoff <- optimalCutoff(test_logit$Survived, predicted, optimiseFor = 'Both')
 
 plotROC(test_logit$Survived, predicted)
 true_positive <- sensitivity(test_logit$Survived, predicted, threshold = opt_cutoff)
@@ -468,9 +473,31 @@ precision <- precision(test_logit$Survived, predicted, threshold = opt_cutoff)
 mis_class_rate <- misClassError(test_logit$Survived, predicted, threshold = opt_cutoff) 
 ks_stat <- ks_stat(test_logit$Survived, predicted)
 ks_plot(test_logit$Survived, predicted)
-
-
+Concordance(test_logit$Survived, predicted)
+confusionMatrix(test_logit$Survived, predicted, threshold = opt_cutoff)
 
 
 
 # Random Forest ----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
