@@ -3,6 +3,10 @@ require(magrittr)
 require(tidyverse)
 require(InformationValue)
 require(car)
+require(mice)
+require(caret)
+require(gglasso)
+
 
 
 # Datasets and functions----
@@ -397,6 +401,10 @@ smbinning.factor = function(df,y,x,maxcat=10){
 
 
 
+
+
+
+
 # Logistic Regression ----
 require(InformationValue)
 set.seed(1)
@@ -472,9 +480,26 @@ true_negative <- specificity(test_logit$Survived, predicted, threshold = opt_cut
 precision <- precision(test_logit$Survived, predicted, threshold = opt_cutoff)
 mis_class_rate <- misClassError(test_logit$Survived, predicted, threshold = opt_cutoff) 
 ks_stat <- ks_stat(test_logit$Survived, predicted)
-ks_plot(test_logit$Survived, predicted)
+ks_plot(test_logit$Survived, predicted) + theme_bw()
 Concordance(test_logit$Survived, predicted)
 confusionMatrix(test_logit$Survived, predicted, threshold = opt_cutoff)
+
+
+#Logistic Regression with selection and k-fold validation ----
+
+#With mice and group lasso
+full_data_2 <- mice(full_data)
+for(i in (1:full_data_2$m)) {
+  data <- full_data %>%
+    replace(., is.na(.), full_data_2$imp$Age[,1])
+    
+}
+
+
+#With WOE (ungrouped lasso)
+full_data_2 <- na.omit(full_data) %>%
+  select(-c(PassengerId, Ticket, Cabin))
+
 
 
 
